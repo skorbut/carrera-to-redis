@@ -1,26 +1,31 @@
 import os
 import sys
-import serial
 import time
 import json
 import redis
-from datetime import datetime
+from carreralib import ControlUnit
+import rq
 
 serial_port = os.environ.get('SERIAL_PORT')
+queue_name = os.environ.get('REDIS_QUEUE')
+
 if not serial_port:
   print('SERIAL_PORT is not defined')
   sys.exit(1)
-redis_list = os.environ.get('REDIS_LIST') or 'track-events'
 
+if not queue_name:
+  print('REDIS_QUEUE is not defined')
+  sys.exit(1)
 
-ser = serial.Serial(serial_port, 9600, timeout=0)
-r = redis.StrictRedis()
+cu = ControlUnit(serial_port)
+print("Connected to control unit")
 
-
+queue = rq.Queue(queue_name, connection=redis.StrictRedis())
+print("Connected to redis queue")
 
 while (True):
-  if (ser.in_waiting>0):
-    data_str = ser.read(ser.in_waiting).decode('ascii')
-    event_string = json.dumps({'timestamp': datetime.now().isoformat(), 'payload': data_str})
-    r.rpush(redis_list, event_string)
+  status_or_timer = cu.request
+  event_data = json.dumps(status_or_timer)
+  event_name = type(status_or_timer).__name__
+  queue.enqueue("app.tasks.%s" % event_name, event_data)
   time.sleep(0.01)

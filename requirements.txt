@@ -1,0 +1,5 @@
+carreralib==0.6.0
+Click==7.0
+pyserial==3.4
+redis==3.0.1
+rq==0.13.0
