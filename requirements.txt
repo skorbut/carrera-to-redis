@@ -1,5 +1,10 @@
-carreralib==0.6.0
-Click==7.0
-pyserial==3.4
-redis==3.0.1
-rq==0.13.0
+Package       Version
+------------- -------
+carreralib    0.6.0  
+Click         7.0    
+pip           18.1   
+pyserial      3.4    
+python-dotenv 0.10.1 
+redis         3.0.1  
+rq            0.13.0 
+setuptools    39.0.1 
