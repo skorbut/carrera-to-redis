@@ -32,7 +32,7 @@ queue = rq.Queue(queue_name, connection=redis.StrictRedis())
 print("Connected to redis queue")
 
 while (True):
-  status_or_timer = cu.request
+  status_or_timer = cu.request()
   event_data = json.dumps(status_or_timer)
   event_name = type(status_or_timer).__name__
   queue.enqueue("app.tasks.%s" % event_name, event_data)
