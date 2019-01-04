@@ -1,3 +1,5 @@
+import settings
+import serial
 import os
 import sys
 import time
@@ -6,8 +8,8 @@ import redis
 from carreralib import ControlUnit
 import rq
 
-serial_port = os.environ.get('SERIAL_PORT')
-queue_name = os.environ.get('REDIS_QUEUE')
+serial_port = os.getenv('SERIAL_PORT')
+queue_name = os.getenv('REDIS_QUEUE')
 
 if not serial_port:
   print('SERIAL_PORT is not defined')
@@ -17,8 +19,14 @@ if not queue_name:
   print('REDIS_QUEUE is not defined')
   sys.exit(1)
 
-cu = ControlUnit(serial_port)
-print("Connected to control unit")
+while True:
+  try:
+    cu = ControlUnit(serial_port)
+    break
+  except serial.serialutil.SerialException:
+    print("control unit not connected")
+    time.sleep(5)
+print("control unit connected")
 
 queue = rq.Queue(queue_name, connection=redis.StrictRedis())
 print("Connected to redis queue")
