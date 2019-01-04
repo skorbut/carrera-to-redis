@@ -29,11 +29,11 @@ while True:
 print("control unit connected")
 
 queue = rq.Queue(queue_name, connection=redis.StrictRedis())
-print("Connected to redis queue")
+print("redis queue connected")
 
 while (True):
   status_or_timer = cu.request()
   event_data = json.dumps(status_or_timer)
   event_name = type(status_or_timer).__name__
   queue.enqueue("app.tasks.%s" % event_name, event_data)
-  time.sleep(0.01)
+  time.sleep(0.1)
