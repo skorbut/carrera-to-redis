@@ -32,9 +32,18 @@ print("control unit connected")
 queue = rq.Queue(queue_name, connection = Redis.from_url(redis_url))
 print("redis queue connected")
 
+last_status = None
+
 while (True):
   status_or_timer = cu.request()
   event_data = json.dumps(status_or_timer)
   event_name = type(status_or_timer).__name__
-  queue.enqueue("app.tasks.%s" % event_name, event_data)
+  if 'Status' == event_name:
+    if last_status != status_or_timer:
+      queue.enqueue("app.tasks.%s" % event_name, event_data)
+      last_status = status_or_timer
+  elif 'Timer' == event_name:
+    queue.enqueue("app.tasks.%s" % event_name, event_data)
+  else:
+    print("unknown event received: %s" % event_name)
   time.sleep(0.1)
