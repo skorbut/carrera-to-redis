@@ -9,6 +9,7 @@ from carreralib import ControlUnit
 import rq
 
 serial_port = os.getenv('SERIAL_PORT')
+redis_url = os.getenv('REDIS_URL') or 'redis://'
 queue_name = os.getenv('REDIS_QUEUE')
 
 if not serial_port:
@@ -28,7 +29,7 @@ while True:
     time.sleep(5)
 print("control unit connected")
 
-queue = rq.Queue(queue_name, connection=redis.StrictRedis())
+queue = rq.Queue(queue_name, connection = Redis.from_url(redis_url))
 print("redis queue connected")
 
 while (True):

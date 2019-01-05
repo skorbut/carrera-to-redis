@@ -3,6 +3,8 @@ Read Serial Connection events of a carrera digital slot car track and post event
 
 It's an endless loop requesting information from a carrera control unit connected via USB, serial port given by ENV Variable SERIAL_PORT and adding to the redis queue identified by ENV Variable REDIS_QUEUE.
 
+To connect a REDIS not running on the local machine or using a different port use the ENV Variable REDIS_URL to supply the Redis URL.
+
 ## Setup
 
 clone the repository
